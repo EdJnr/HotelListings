@@ -1,11 +1,14 @@
+using HotelListings.Configurations;
 using HotelListings.Data;
+using HotelListings.IRepository;
+using HotelListings.Repository;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson(op => op.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -17,6 +20,10 @@ builder.Services.AddCors(o =>
         .AllowAnyMethod()
         .AllowAnyHeader());
 });
+
+builder.Services.AddAutoMapper(typeof(MapperInitializer));
+
+builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
 
 builder.Services.AddDbContext<DatabaseContext>(options =>
